@@ -7,9 +7,9 @@
 
 import UIKit
 
-final class CharacterListView: UIView {
+final class RMCharacterListView: UIView {
     
-    private let viewModel = CharacterListViewModel()
+    private let viewModel = RMCharacterListViewModel()
     
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
@@ -24,7 +24,10 @@ final class CharacterListView: UIView {
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(
+            RMCharacterCollectionViewCell.self,
+            forCellWithReuseIdentifier: RMCharacterCollectionViewCell.cellIdentifier
+        )
         collectionView.isHidden = true
         collectionView.alpha = 0
         return collectionView
@@ -44,6 +47,7 @@ final class CharacterListView: UIView {
         addSubviews(collectionView, spinner)
         configureUI()
         spinner.startAnimating()
+        viewModel.delegate = self
         viewModel.fetchCharacters()
         setUpCollectionView()
     }
@@ -66,13 +70,19 @@ final class CharacterListView: UIView {
         collectionView.dataSource = viewModel
         collectionView.delegate = viewModel
         
-        DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: { [self] in
-            spinner.stopAnimating()
-            collectionView.isHidden = false
-            
-            UIView.animate(withDuration: 0.4) { [self] in
-                collectionView.alpha = 1
-            }
-        })
+
+    }
+}
+
+
+extension RMCharacterListView: RMCharacterListViewModelDelegate {
+    func didLoadInitialCharacters() {
+        spinner.stopAnimating()
+        collectionView.isHidden = false
+        collectionView.reloadData()
+        
+        UIView.animate(withDuration: 0.4) {
+            self.collectionView.alpha = 1
+        }
     }
 }
