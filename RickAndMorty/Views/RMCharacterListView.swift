@@ -33,6 +33,10 @@ final class RMCharacterListView: UIView {
             RMCharacterCollectionViewCell.self,
             forCellWithReuseIdentifier: RMCharacterCollectionViewCell.cellIdentifier
         )
+        collectionView.register(
+            RMFooterLoadingCollectionReusableView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: RMFooterLoadingCollectionReusableView.identifier)
         collectionView.isHidden = true
         collectionView.alpha = 0
         return collectionView
@@ -74,8 +78,6 @@ final class RMCharacterListView: UIView {
     private func setUpCollectionView(){
         collectionView.dataSource = viewModel
         collectionView.delegate = viewModel
-        
-
     }
 }
 
